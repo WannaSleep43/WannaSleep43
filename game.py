@@ -250,12 +250,23 @@ class Board:
             for elem in i:
                 if elem not in self.shooted_ships:
                     flg = False
-            if flg or self.name == 'Вы:':
+            if self.name == 'Вы:':
                 pygame.draw.rect(screen, pygame.Color(black), (
                     (i[0][0] - 1) * self.cell_size + self.left,
                     (i[0][1] - 1) * self.cell_size + self.top,
                     self.cell_size * (i[-1][0] - i[0][0] + 1),
                     self.cell_size * (i[-1][1] - i[0][1] + 1)), 3)
+            if flg:
+                pygame.draw.rect(screen, pygame.Color(black), (
+                    (i[0][0] - 1) * self.cell_size + self.left,
+                    (i[0][1] - 1) * self.cell_size + self.top,
+                    self.cell_size * (i[-1][0] - i[0][0] + 1),
+                    self.cell_size * (i[-1][1] - i[0][1] + 1)), 5)
+                pygame.draw.rect(screen, pygame.Color((155, 155, 155)), (
+                    (i[0][0] - 1) * self.cell_size + self.left,
+                    (i[0][1] - 1) * self.cell_size + self.top,
+                    self.cell_size * (i[-1][0] - i[0][0] + 1),
+                    self.cell_size * (i[-1][1] - i[0][1] + 1)))
 
     def shoot_choice(self):
         pygame.time.delay(random.randint(1000, 1500))
@@ -594,13 +605,18 @@ def main():
             screen.blit(text, msg_rect)
             pygame.display.flip()
             pygame.time.delay(5000)
-            main()
+            start()
 
         elif len(board1.shooted_ships) == 20:
             with open('data.txt') as base:
-                file = base.readlines().split('\n')
+                file = base.readlines()
                 base.close()
-            file.append(f'{moves} {datetime.now()}')
+            if moves % 10 == 1 and moves != 11:
+                file.append(f'{moves} ход - {str(datetime.datetime.now())[:20]}\n')
+            elif (moves % 10 == 2 or moves % 10 == 3) and moves != 12 and moves != 13:
+                file.append(f'{moves} хода - {str(datetime.datetime.now())[:20]}\n')
+            else:
+                file.append(f'{moves} ходов - {str(datetime.datetime.now())[:20]}\n')
             with open('data.txt', 'w') as base:
                 base.writelines(file)
                 base.close()
@@ -611,7 +627,7 @@ def main():
             screen.blit(text, msg_rect)
             pygame.display.flip()
             pygame.time.delay(5000)
-            main()
+            start()
 
     pygame.quit()
 
