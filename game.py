@@ -57,6 +57,7 @@ class Board:
 
         # Сет с координатами кораблей
         self.ships = set()
+        self.ships2 = set()
 
         # Списки клеток, в которые мы уже стреляли(разные, в зависимости от того был ли корабль в этой клетке)
         self.shooted_cells = []
@@ -211,8 +212,12 @@ class Board:
                 self.around_last_shoot.remove(cell)
             self.field[cell[1] - 1][cell[0] - 1] = 3
             self.shooted_ships.append(cell)
+        delete = []
         for i in self.ships:
+            flag = True
             for j in i:
+                if j not in self.shooted_ships and j not in self.shooted_cells:
+                    flag = False
                 if j == cell:
                     f = True
                     ship = sorted(i)
@@ -228,6 +233,10 @@ class Board:
                                     self.avalible_cells_for_shoot.remove((x, y))
                         self.around_last_shoot.clear()
                     break
+            if flag:
+                delete.append(i)
+        for i in delete:
+            self.ships2.discard(i)
 
     def get_cell(self, mouse_pos):
         cell_x = (mouse_pos[0] - self.left) // self.cell_size + 1
@@ -427,6 +436,20 @@ def draw_message(message, x, y):
     screen.blit(text, msg_rect)
 
 
+def draw_boats_count(x, desk):
+    draw_message("Кол-во:", x, upper_m)
+    for i in range(1, 5):
+        count = 0
+        for j in desk.ships2:
+            if len(j) == i:
+                count += 1
+        message = f'{i}: {count}'
+        msg_width, msg_height = font.size(message)
+        msg_rect = x, upper_m + msg_height * (i + 1)
+        text = font.render(message, True, black)
+        screen.blit(text, msg_rect)
+
+
 all_sprites = pygame.sprite.Group()
 horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
@@ -455,10 +478,10 @@ def start():
                 main()
 
         screen_.fill(pygame.Color("white"))
-        start_button.draw_button()
-        start_button.change_color()
         all_sprites.draw(screen)
         all_sprites.update()
+        start_button.draw_button()
+        start_button.change_color()
         draw_message('Топ 10 лучших результатов(кол-во ходов, дата):', 400, 50)
         if len(data) == 0:
             draw_message('Еще не сыграно ни одной игры.', 450, 100)
@@ -579,9 +602,12 @@ def main():
                 mode = False
             board2.draw_ships(screen)
             pygame.display.flip()
+    board2.ships2 = board2.ships.copy()
+    board1.ships2 = board1.ships.copy()
     screen.fill(very_light_gray)
     moves = 0
     while not game_over:
+        screen.fill(very_light_gray)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_over = True
@@ -594,6 +620,8 @@ def main():
         board2.render(screen)
         board1.draw_ships(screen)
         board2.draw_ships(screen)
+        draw_boats_count(left_m + 11 * cell_size, board1)
+        draw_boats_count(left_m + 15 * cell_size, board2)
         pygame.display.flip()
         if turn:
             board2.shoot_choice()
