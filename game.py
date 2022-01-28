@@ -469,7 +469,7 @@ def start():
     for i in range(20):
         Ball(20, 100, 100)
     clock = pygame.time.Clock()
-    data = open('data.txt').readlines()
+    data = sorted(open('data.txt').readlines())
     running = True
     while running:
         for event in pygame.event.get():
@@ -629,7 +629,7 @@ def main():
         if len(board2.shooted_ships) == 20:
             message = 'ВЫ ПРОГИГРАЛИ :( НОВАЯ ИГРА АВТОМАТИЧЕСКИ НАЧНЕТСЯ ЧЕРЕЗ 5СЕК'
             msg_width, msg_height = font.size(message)
-            msg_rect = 100, 400
+            msg_rect = 100, 390
             text = font.render(message, True, (255, 0, 0))
             screen.blit(text, msg_rect)
             pygame.display.flip()
@@ -651,7 +651,7 @@ def main():
                 base.close()
             message = 'ВЫ ВЫИГРАЛИ! НОВАЯ ИГРА АВТОМАТИЧЕСКИ НАЧНЕТСЯ ЧЕРЕЗ 5СЕК'
             msg_width, msg_height = font.size(message)
-            msg_rect = 100, 400
+            msg_rect = 100, 390
             text = font.render(message, True, (255, 0, 0))
             screen.blit(text, msg_rect)
             pygame.display.flip()
