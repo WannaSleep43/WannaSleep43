@@ -437,15 +437,16 @@ def draw_message(message, x, y):
 
 
 def draw_boats_count(x, desk):
-    draw_message("Кол-во:", x, upper_m)
+    draw_message("Кол-во кораблей:", x, upper_m + 12 * cell_size)
     for i in range(1, 5):
         count = 0
         for j in desk.ships2:
             if len(j) == i:
                 count += 1
-        message = f'{i}: {count}'
+        message = f'{i}кл: {count}шт   '
         msg_width, msg_height = font.size(message)
-        msg_rect = x, upper_m + msg_height * (i + 1)
+        k = 0 if i <= 2 else 1
+        msg_rect = x + msg_width * k, upper_m + 12 * cell_size + msg_height * 1 + cell_size * ((i - 1) % 2)
         text = font.render(message, True, black)
         screen.blit(text, msg_rect)
 
@@ -620,8 +621,8 @@ def main():
         board2.render(screen)
         board1.draw_ships(screen)
         board2.draw_ships(screen)
-        draw_boats_count(left_m + 11 * cell_size, board1)
-        draw_boats_count(left_m + 15 * cell_size, board2)
+        draw_boats_count(left_m, board1)
+        draw_boats_count(left_m + 19 * cell_size, board2)
         pygame.display.flip()
         if turn:
             board2.shoot_choice()
